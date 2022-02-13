@@ -59,7 +59,7 @@ runUserTests = do
        unless (xs == ["admin"]) $
            die ("Bad user list: " ++ show xs)
     do info "Getting admin user list"
-       xs <- getAdmins
+       xs <- getAdminsg
        unless (groupMembers xs == ["admin"]) $
            die ("Bad admin user list: " ++ show xs)
 
@@ -81,6 +81,12 @@ runUserTests = do
        xs <- getAdmins
        unless (groupMembers xs == ["admin"]) $
            die ("Bad admin user list: " ++ show xs)
+    do info "Checking new user with existing username is not created"
+        testEmail <- mkTestEmail `liftM` randomIO
+        createUserSelfRegister "HackageTestUser1" "Test Not a User" testEmail
+        xs <- getUsers
+        unless (xs == ["admin","HackageTestUser1","HackageTestUser2"]) $
+            die ("Bad user list: " ++ show xs)
     do info "Checking new users name & contact info"
        ncinf <- getNameContactInfo (Auth "HackageTestUser1" "testpass1")
                                    "/user/HackageTestUser1/name-contact.json"
