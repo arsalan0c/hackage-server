@@ -472,6 +472,7 @@ userSignupFeature ServerEnv{serverBaseURI, serverCron}
                  , errBadRequest "Missing form fields" [] ]
 
           guardValidLookingUserName username
+          guardUserNameDoesNotExist username
           guardValidLookingName     realname
           guardValidLookingEmail    useremail
 
@@ -481,9 +482,13 @@ userSignupFeature ServerEnv{serverBaseURI, serverCron}
           guard (T.length str <= 70) ?! "Sorry, we didn't expect names to be longer than 70 characters."
           guard (T.all isPrint str)  ?! "Unexpected character in name, please use only printable Unicode characters."
 
-        guardValidLookingUserName str = either errBadRealName return $ do
+        guardValidLookingUserName str = either errBadUserName return $ do
           guard (T.length str <= 50)    ?! "Sorry, we didn't expect login names to be longer than 50 characters."
           guard (T.all isValidUserNameChar str) ?! "Sorry, login names have to be ASCII characters only or _, no spaces or other symbols."
+
+        guardUserNameDoesNotExist str = either errBadUserName return $ do
+          userNameExists <- doesUserNameExist (T.unpack str)
+          guard (not userNameExists) ?! "Sorry, the login name already exists."
 
         guardValidLookingEmail str = either errBadEmail return $ do
           guard (T.length str <= 100)     ?! "Sorry, we didn't expect email addresses to be longer than 100 characters."

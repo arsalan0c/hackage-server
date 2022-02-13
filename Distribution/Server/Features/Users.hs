@@ -28,7 +28,7 @@ import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.Set (Set)
 import qualified Data.Set as Set
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, isJust)
 import Data.Function (fix)
 import Control.Applicative (optional)
 import Data.Aeson (toJSON)
@@ -93,6 +93,8 @@ data UserFeature = UserFeature {
 
     -- | Get a username from a path.
     userNameInPath      :: forall m. MonadPlus m => DynamicPath -> m UserName,
+    -- | Check if a username exists.
+    doesUserNameExist   :: forall m. MonadIO m => String -> m Bool,
     -- | Lookup a `UserId` from a name, if the name exists.
     lookupUserName      :: UserName -> ServerPartE UserId,
     -- | Lookup full `UserInfo` from a name, if the name exists.
@@ -634,6 +636,11 @@ userFeature templates usersState adminsState
 
     userNameInPath :: forall m. MonadPlus m => DynamicPath -> m UserName
     userNameInPath dpath = maybe mzero return (simpleParse =<< lookup "username" dpath)
+
+    doesUserNameExist :: MonadIO m => String -> m Bool
+    doesUserNameExist uname = do
+        users <- queryGetUserDb
+        return $ isJust $ Users.lookupUserName (UserName uname) users
 
     lookupUserName :: UserName -> ServerPartE UserId
     lookupUserName = fmap fst . lookupUserNameFull
