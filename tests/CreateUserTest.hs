@@ -83,7 +83,7 @@ runUserTests = do
            die ("Bad admin user list: " ++ show xs)
     do info "Checking new user with existing username is not created"
         testEmail <- mkTestEmail `liftM` randomIO
-        createUserSelfRegister "HackageTestUser1" "Test Not a User" testEmail
+        createUserSelfRegister "HackageTestUser1" "Test User" testEmail
         xs <- getUsers
         unless (xs == ["admin","HackageTestUser1","HackageTestUser2"]) $
             die ("Bad user list: " ++ show xs)

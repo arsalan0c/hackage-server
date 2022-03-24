@@ -619,7 +619,7 @@ userFeature templates usersState adminsState
             Right authToken -> do
               res <- updateState usersState (RevokeAuthToken uid authToken)
               case res of
-                Nothing ->
+
                   ok $ toResponse $
                     template [ "username" $= display (userName uinfo) ]
                 Just (Left Users.ErrNoSuchUserId) ->

@@ -512,10 +512,15 @@ test-suite HighLevelTest
 test-suite CreateUserTest
   import:         test-defaults
 
-  if ! flag(test-create-user)
-    buildable: False
   type:           exitcode-stdio-1.0
   main-is:        CreateUserTest.hs
+  other-modules:
+    HackageClientUtils
+    Run
+    MailUtils
+    HttpUtils
+    Package
+    Util
 
   -- see note in 'Test-Suite HighLevelTest'
   build-tool-depends: hackage-server:hackage-server

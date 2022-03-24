@@ -103,6 +103,11 @@ runUserTests = do
        xs <- fmap (map userName) getUsers
        unless (xs == ["admin","HackageTestUser1","HackageTestUser2"]) $
            die ("Bad user list: " ++ show xs)
+   --  do info "Checking new user with existing username is not created"
+   --     createUserDirect (Auth "admin" "admin") "HackageTestUser1" "testpass"
+   --     xs <- fmap (map userName) getUsers
+   --     unless (xs == ["admin","HackageTestUser1","HackageTestUser2"]) $
+   --         die ("Bad user list: " ++ show xs)
     do info "Checking new users are not in admin list"
        xs <- getAdmins
        unless (map userName (groupMembers xs) == ["admin"]) $
